@@ -1,12 +1,16 @@
 package com.assessment.user.api;
 
+import com.assessment.user.domain.User;
 import com.assessment.user.dto.JSendDto;
+import com.assessment.user.dto.JSendStatus;
 import com.assessment.user.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -20,11 +24,49 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<JSendDto> getAll(){
-        return ResponseEntity.ok(userService.findAll());
+        JSendDto jSendDto = new JSendDto();
+        List<User> userList = userService.findAll();
+        if(userList==null||userList.isEmpty()){
+            jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
+            jSendDto.getData().put("Users","Not Found");
+            return new ResponseEntity<>(jSendDto,HttpStatus.NO_CONTENT);
+        }
+        else {
+            jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
+            jSendDto.getData().put("Users",userList);
+            return ResponseEntity.ok(jSendDto);
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<JSendDto> get(@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok(userService.find(id));
+        Optional<User> user = userService.find(id);
+        JSendDto jSendDto = new JSendDto();
+        if(user.isPresent()){
+            jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
+            jSendDto.getData().put("User",user.get());
+            return ResponseEntity.ok(jSendDto);
+        }
+        else {
+            jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
+            jSendDto.getData().put("User Not Found",String.valueOf(id));
+            return new ResponseEntity<>(jSendDto, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<JSendDto> post(@RequestBody User user){
+       JSendDto jSendDto = new JSendDto();
+       User savedUser = userService.save(user);
+       if(savedUser!=null){
+           jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
+           jSendDto.getData().put("Saved User",savedUser);
+           return ResponseEntity.created(URI.create("/users/"+savedUser.getId())).body(jSendDto);
+       }
+       else {
+           jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
+           jSendDto.getData().put("Unable to Save User",user);
+           return ResponseEntity.unprocessableEntity().body(jSendDto);
+       }
     }
 }

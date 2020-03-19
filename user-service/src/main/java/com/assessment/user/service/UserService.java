@@ -19,31 +19,18 @@ public class UserService {
     }
 
 
-    public JSendDto findAll(){
-
+    public List<User> findAll(){
         List<User> userList = userRepository.findAll();
-
-        JSendDto jSendDto = new JSendDto();
-        jSendDto.getData().put("users",userList);
-        jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
-
-        return jSendDto;
+        return userList;
     }
 
-    public JSendDto find(long id)  {
-
+    public Optional<User> find(long id)  {
         Optional<User> optionalUser = userRepository.findById(id);
-        JSendDto jSendDto = new JSendDto();
-        if(!optionalUser.isPresent()){
-            jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
-            jSendDto.getData().put("User ID Not Found",String.valueOf(id));
-            return jSendDto;
-        }
-        else {
-            jSendDto.getData().put("user",optionalUser.get());
-            jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
-           return jSendDto;
-        }
+        return optionalUser;
+    }
 
+    public User save(User user){
+        User savedUser =  userRepository.save(user);
+        return savedUser;
     }
 }
