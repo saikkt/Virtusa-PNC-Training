@@ -1,11 +1,9 @@
-package com.assessment.user.api;
+package com.assessment.user.controller;
 
 import com.assessment.user.domain.User;
 import com.assessment.user.dto.JSendDto;
 import com.assessment.user.dto.JSendStatus;
-import com.assessment.user.dto.UserModel;
 import com.assessment.user.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")

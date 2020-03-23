@@ -1,7 +1,5 @@
 package com.assessment.user.service;
 
-import com.assessment.user.dto.JSendStatus;
-import com.assessment.user.dto.JSendDto;
 import com.assessment.user.domain.User;
 import com.assessment.user.repository.UserRepository;
 import org.springframework.stereotype.Service;

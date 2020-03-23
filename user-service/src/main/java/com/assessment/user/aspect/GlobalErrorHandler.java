@@ -1,7 +1,7 @@
 package com.assessment.user.aspect;
 
-import com.assessment.user.dto.JSendStatus;
 import com.assessment.user.dto.JSendDto;
+import com.assessment.user.dto.JSendStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
