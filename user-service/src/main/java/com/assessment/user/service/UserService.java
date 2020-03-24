@@ -22,7 +22,7 @@ public class UserService {
         return userList;
     }
 
-    public Optional<User> find(long id)  {
+    public Optional<User> findById(long id)  {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser;
     }

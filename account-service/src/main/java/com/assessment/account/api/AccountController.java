@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounts")
@@ -41,18 +42,19 @@ public class AccountController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<JSendDto> save(@RequestBody Account account){
-        Account savedAccount = accountService.save(account);
+    @PostMapping("/{userId}")
+    public ResponseEntity<JSendDto> save(@PathVariable(name = "userId") long userId,@RequestBody List<Account> accounts){
+        accounts.forEach(account -> account.setUserId(userId));
+        List<Account> savedAccounts = accountService.saveAll(accounts);
         JSendDto jSendDto = new JSendDto();
-        if(savedAccount!=null){
+        if(savedAccounts!=null){
             jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
-            jSendDto.getData().put("Saved Account",savedAccount);
-            return ResponseEntity.created(URI.create("/accounts/"+savedAccount.getId())).body(jSendDto);
+            jSendDto.getData().put("Saved Accounts",savedAccounts);
+            return new ResponseEntity<>(jSendDto,HttpStatus.CREATED);
         }
         else {
             jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
-            jSendDto.getData().put("Unable to save account",account);
+            jSendDto.getData().put("Unable to save account",accounts);
             return new ResponseEntity<>(jSendDto,HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }

@@ -30,9 +30,6 @@ public class UserController {
         JSendDto jSendDto = new JSendDto();
 
         List<User> userList = userService.findAll();
-//                .map(user -> UserMapper.toModel(user))
-//                .collect(Collectors.toList());
-
         if(userList.isEmpty()){
             jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
             jSendDto.getData().put("Users","Not Found");
@@ -47,7 +44,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<JSendDto> get(@PathVariable(name = "id") long id) {
-        Optional<User> user = userService.find(id);
+        Optional<User> user = userService.findById(id);
         JSendDto jSendDto = new JSendDto();
         if(user.isPresent()){
             jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());

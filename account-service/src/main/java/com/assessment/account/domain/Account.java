@@ -24,6 +24,19 @@ public class Account {
     @Column(name = "BALANCE")
     private BigDecimal balance;
 
+    public Account(long userId, long accountNumber, String accountType) {
+        this.userId = userId;
+        this.accountNumber = accountNumber;
+        this.accountType = accountType;
+    }
+
+    public Account(long accountNumber, String accountType) {
+        this.accountNumber = accountNumber;
+        this.accountType = accountType;
+    }
+
+    protected Account(){}
+
     public long getId() {
         return id;
     }

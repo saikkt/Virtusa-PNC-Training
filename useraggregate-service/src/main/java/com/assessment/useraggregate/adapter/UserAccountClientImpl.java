@@ -53,14 +53,27 @@ public class UserAccountClientImpl implements UserAccountClient {
         UserModel userModel = UserAndAccountMapper.toUserModel(userAndAccountModel);
         List<AccountModel> accountModels = UserAndAccountMapper.toAccountModel(userAndAccountModel);
 
-        //post user model
+        //Save user model
         ResponseEntity<JSendDto> userModelResponseEntity =
                 restTemplate.postForEntity("http://localhost:9000/users",userModel,JSendDto.class);
-        Object object = userModelResponseEntity.getBody().getData().get("Saved User");
-        UserModel savedUserModel = objectMapper.convertValue(object, new TypeReference<UserModel>() {});
-        HttpStatus httpStatus = userModelResponseEntity.getStatusCode();
-        //post account model
-        //------- to do
+        Object userObject = userModelResponseEntity.getBody().getData().get("Saved User");
+        UserModel savedUserModel = objectMapper.convertValue(userObject, new TypeReference<UserModel>() {});
+        HttpStatus userModelResponseEntityStatusCode = userModelResponseEntity.getStatusCode();
+
+        //Save account model
+        ResponseEntity<JSendDto> accountModelResponseEntity =
+                restTemplate.postForEntity("http://localhost:9002/accounts/"+savedUserModel.getId(),accountModels,JSendDto.class);
+        Object accountObject = accountModelResponseEntity.getBody().getData().get("Saved Accounts");
+        List<AccountModel> savedAccountModels = objectMapper.convertValue(accountObject, new TypeReference<List<AccountModel>>() {});
+        HttpStatus accountModelResponseEntityStatusCode = accountModelResponseEntity.getStatusCode();
+
+        if(userModelResponseEntityStatusCode==HttpStatus.CREATED &&
+            accountModelResponseEntityStatusCode==HttpStatus.CREATED){
+            UserAndAccountModel savedUserAndAccountModel = new UserAndAccountModel();
+            savedUserAndAccountModel.setUserModel(savedUserModel);
+            savedUserAndAccountModel.setAccountModels(savedAccountModels);
+            return savedUserAndAccountModel;
+        }
 
         return null;
     }

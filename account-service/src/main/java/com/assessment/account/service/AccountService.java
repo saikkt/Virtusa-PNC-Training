@@ -15,14 +15,6 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public JSendDto findAll(){
-        List<Account> accounts =  accountRepository.findAll();
-        JSendDto jSendDto = new JSendDto();
-        jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
-        jSendDto.getData().put("accounts",accounts);
-        return jSendDto;
-    }
-
     public List<Account> findByUserId(long userId){
         List<Account> accounts = accountRepository.findByUserId(userId);
         return accounts;
@@ -30,5 +22,9 @@ public class AccountService {
 
     public Account save(Account account){
         return accountRepository.save(account);
+    }
+
+    public List<Account> saveAll(List<Account> accounts){
+       return accountRepository.saveAll(accounts);
     }
 }

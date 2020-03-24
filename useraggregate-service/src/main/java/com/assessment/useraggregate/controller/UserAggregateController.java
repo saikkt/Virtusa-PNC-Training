@@ -36,7 +36,7 @@ public class UserAggregateController {
         if(savedUserAndAccountModel!=null){
             jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
             jSendDto.getData().put("UserAndAccount",savedUserAndAccountModel);
-            return ResponseEntity.created(URI.create("/users/"+userAndAccountModel.getUserModel().getId())).body(jSendDto);
+            return new ResponseEntity<>(jSendDto,HttpStatus.CREATED);
         }
         else {
             jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
