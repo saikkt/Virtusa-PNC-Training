@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.net.URI;
 
 @RestController
@@ -26,6 +27,14 @@ public class UserAggregateController {
         JSendDto jSendDto = new JSendDto();
         jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
         jSendDto.getData().put("User and Accounts", userAccountClient.getUserAndAccounts());
+        return ResponseEntity.ok(jSendDto);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<JSendDto> getByUserId(@PathVariable(name = "userId") long userId){
+        JSendDto jSendDto = new JSendDto();
+        jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
+        jSendDto.getData().put("User and Accounts", userAccountClient.getUserAndAccountsById(userId));
         return ResponseEntity.ok(jSendDto);
     }
 

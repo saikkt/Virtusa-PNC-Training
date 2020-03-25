@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Component
@@ -17,24 +18,40 @@ public class UserAccountClientImpl implements UserAccountClient {
 
     private RestTemplate restTemplate = new RestTemplate();
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public UserModel getUserById(long userId) {
+        ResponseEntity<JSendDto> jSendDtoResponseEntity =
+                restTemplate.getForEntity("http://localhost:9000/users/"+userId,JSendDto.class);
+        Object object = null;
+        if(jSendDtoResponseEntity.getBody()!=null){
+            object = jSendDtoResponseEntity.getBody().getData().get("User");
+        }
+
+        return objectMapper.convertValue(object, new TypeReference<UserModel>() {});
+    }
     @Override
     public List<UserModel> getUsers() {
         ResponseEntity<JSendDto> jSendDtoResponseEntity = restTemplate.getForEntity("http://localhost:9000/users",JSendDto.class);
         JSendDto jSendDto = jSendDtoResponseEntity.getBody();
-        Object object = jSendDto.getData().get("Users");
-        List<UserModel> userModels = objectMapper.convertValue(object, new TypeReference<List<UserModel>>() {
+        Object object = null;
+        if (jSendDto != null) {
+            object = jSendDto.getData().get("Users");
+        }
+        return objectMapper.convertValue(object, new TypeReference<List<UserModel>>() {
         });
-        return userModels;
     }
 
     @Override
     public List<AccountModel> getAccountsById(long userId) {
         ResponseEntity<JSendDto> jSendDtoResponseEntity = restTemplate.getForEntity("http://localhost:9002/accounts?userId="+userId,JSendDto.class);
         JSendDto jSendDto = jSendDtoResponseEntity.getBody();
-        Object object = jSendDto.getData().get("Accounts");
-        List<AccountModel> accountModels = objectMapper.convertValue(object, new TypeReference<List<AccountModel>>() {
+        Object object = null;
+        if (jSendDto != null) {
+            object = jSendDto.getData().get("Accounts");
+        }
+        return objectMapper.convertValue(object, new TypeReference<List<AccountModel>>() {
         });
-        return accountModels;
     }
 
     @Override
@@ -48,6 +65,16 @@ public class UserAccountClientImpl implements UserAccountClient {
     }
 
     @Override
+    public UserAndAccountModel getUserAndAccountsById(long userId) {
+        UserAndAccountModel userAndAccountModel = new UserAndAccountModel();
+        UserModel userModel = getUserById(userId);
+        List<AccountModel> accountModels = getAccountsById(userId);
+        userAndAccountModel.setUserModel(userModel);
+        userAndAccountModel.setAccountModels(accountModels);
+        return userAndAccountModel;
+    }
+
+    @Override
     public UserAndAccountModel saveUserAndAccount(UserAndAccountModel userAndAccountModel) {
 
         UserModel userModel = UserAndAccountMapper.toUserModel(userAndAccountModel);
@@ -56,14 +83,14 @@ public class UserAccountClientImpl implements UserAccountClient {
         //Save user model
         ResponseEntity<JSendDto> userModelResponseEntity =
                 restTemplate.postForEntity("http://localhost:9000/users",userModel,JSendDto.class);
-        Object userObject = userModelResponseEntity.getBody().getData().get("Saved User");
+        Object userObject = Objects.requireNonNull(userModelResponseEntity.getBody()).getData().get("Saved User");
         UserModel savedUserModel = objectMapper.convertValue(userObject, new TypeReference<UserModel>() {});
         HttpStatus userModelResponseEntityStatusCode = userModelResponseEntity.getStatusCode();
 
         //Save account model
         ResponseEntity<JSendDto> accountModelResponseEntity =
                 restTemplate.postForEntity("http://localhost:9002/accounts/"+savedUserModel.getId(),accountModels,JSendDto.class);
-        Object accountObject = accountModelResponseEntity.getBody().getData().get("Saved Accounts");
+        Object accountObject = Objects.requireNonNull(accountModelResponseEntity.getBody()).getData().get("Saved Accounts");
         List<AccountModel> savedAccountModels = objectMapper.convertValue(accountObject, new TypeReference<List<AccountModel>>() {});
         HttpStatus accountModelResponseEntityStatusCode = accountModelResponseEntity.getStatusCode();
 
@@ -77,4 +104,6 @@ public class UserAccountClientImpl implements UserAccountClient {
 
         return null;
     }
+
+
 }
