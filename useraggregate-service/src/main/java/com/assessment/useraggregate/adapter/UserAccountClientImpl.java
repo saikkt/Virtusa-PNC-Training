@@ -94,8 +94,8 @@ public class UserAccountClientImpl implements UserAccountClient {
         List<AccountModel> savedAccountModels = objectMapper.convertValue(accountObject, new TypeReference<List<AccountModel>>() {});
         HttpStatus accountModelResponseEntityStatusCode = accountModelResponseEntity.getStatusCode();
 
-        if(userModelResponseEntityStatusCode==HttpStatus.CREATED &&
-            accountModelResponseEntityStatusCode==HttpStatus.CREATED){
+        if(userModelResponseEntityStatusCode== HttpStatus.CREATED &&
+            accountModelResponseEntityStatusCode== HttpStatus.CREATED){
             UserAndAccountModel savedUserAndAccountModel = new UserAndAccountModel();
             savedUserAndAccountModel.setUserModel(savedUserModel);
             savedUserAndAccountModel.setAccountModels(savedAccountModels);

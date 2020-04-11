@@ -20,26 +20,13 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-//    @GetMapping
-//    public ResponseEntity<JSendDto> getAll(){
-//        return ResponseEntity.ok(accountService.findAll());
-//    }
-
     @GetMapping
     public ResponseEntity<JSendDto> get(@RequestParam long userId){
         List<Account> accounts = accountService.findByUserId(userId);
         JSendDto jSendDto = new JSendDto();
-
-        if(accounts.isEmpty()||accounts==null){
-            jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());
-            jSendDto.getData().put("Accounts Not Found For User Id",String.valueOf(userId));
-            return new ResponseEntity<>(jSendDto, HttpStatus.NOT_FOUND);
-        }
-        else {
             jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
             jSendDto.getData().put("Accounts",accounts);
             return ResponseEntity.ok(jSendDto);
-        }
     }
 
     @PostMapping("/{userId}")

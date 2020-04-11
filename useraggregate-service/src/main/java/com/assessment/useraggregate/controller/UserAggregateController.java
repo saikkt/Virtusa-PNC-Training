@@ -8,10 +8,8 @@ import com.assessment.useraggregate.service.UserAggregateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.security.RolesAllowed;
-import java.net.URI;
 
 @RestController
 @RequestMapping("/useraggregate")
@@ -45,7 +43,7 @@ public class UserAggregateController {
         if(savedUserAndAccountModel!=null){
             jSendDto.setStatus(JSendStatus.SUCCESS.toString().toLowerCase());
             jSendDto.getData().put("UserAndAccount",savedUserAndAccountModel);
-            return new ResponseEntity<>(jSendDto,HttpStatus.CREATED);
+            return new ResponseEntity<>(jSendDto, HttpStatus.CREATED);
         }
         else {
             jSendDto.setStatus(JSendStatus.FAIL.toString().toLowerCase());

@@ -3,7 +3,6 @@ package com.assessment.useraggregate.adapter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
 @JsonSerialize

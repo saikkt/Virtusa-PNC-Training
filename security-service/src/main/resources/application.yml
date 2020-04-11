@@ -1,0 +1,17 @@
+server:
+  port: 9005
+#spring:
+#  security:
+#    user:
+#      name: user
+#      password: user
+#      roles: ADMIN, USER
+#security:
+#  oauth2:
+#    client:
+#      client-id: client
+#      client-secret: secret
+#      authorize-grant-types: refresh_code,password,authorization_code,client_credentials
+#      scope: READ
+#    authorization:
+#      check-token-access: permitAll
